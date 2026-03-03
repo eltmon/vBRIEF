@@ -2,7 +2,9 @@
 
 ![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
-**vBRIEF** (Basic Relational Intent Exchange Format) is an open format for agentic memory — todos, plans, playbooks, and workflows in one unified Plan model.
+**vBRIEF** (Basic Relational Intent Exchange Format) is a universal format for structured thinking — from a quick todo list to a full project plan to an AI agent's memory. One schema, graduated complexity, token-efficient by design.
+
+> **TLDR:** Every AI agent invents its own memory format. Every planning tool has its own schema. vBRIEF is the common language — an open format that unifies todos, plans, playbooks, specs, and agent memory into a single Plan model. Start with 4 fields, graduate to DAG workflows. Token-efficient by design.
 
 ## Quick Start
 
