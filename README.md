@@ -47,23 +47,21 @@ Start simple. Add structure only when you need it.
 
 | Document | Description |
 |----------|-------------|
-| [vbrief-spec-0.5.md](vbrief-spec-0.5.md) | Formal specification (RFC 2119) |
-| [GUIDE.md](GUIDE.md) | Reference guide with patterns and recipes |
+| [docs/vbrief-spec-0.5.md](docs/vbrief-spec-0.5.md) | Formal specification (RFC 2119) |
+| [docs/GUIDE.md](docs/GUIDE.md) | Reference guide with patterns and recipes |
 | [docs/getting-started.md](docs/getting-started.md) | Tutorial for beginners |
 | [docs/tron-encoding.md](docs/tron-encoding.md) | TRON format reference |
 | [docs/vbrief-workflow-profile.md](docs/vbrief-workflow-profile.md) | Workflow Profile extension (flow-based programming) |
-| [MIGRATION.md](MIGRATION.md) | v0.4 → v0.5 migration guide |
+| [docs/MIGRATION.md](docs/MIGRATION.md) | v0.4 → v0.5 migration guide |
 
 ## Repo Structure
 
 ```
 vBRIEF/
-├── vbrief-spec-0.5.md    # Formal specification
-├── GUIDE.md               # Reference / cookbook
+├── docs/                  # Guides, spec, and references
 ├── examples/              # Graduated complexity examples (JSON + TRON)
 ├── schemas/               # JSON Schema
 ├── libvbrief/             # Python library
-├── docs/                  # Guides and references
 ├── validation/            # Validators
 ├── tests/                 # Test suite
 └── history/               # Archived drafts and old docs

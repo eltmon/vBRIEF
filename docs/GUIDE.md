@@ -1,6 +1,6 @@
 # vBRIEF v0.5 Reference Guide
 
-> **New to vBRIEF?** Start with [docs/getting-started.md](docs/getting-started.md) for a hands-on tutorial.  
+> **New to vBRIEF?** Start with [getting-started.md](getting-started.md) for a hands-on tutorial.  
 > For the formal specification, see [vbrief-spec-0.5.md](vbrief-spec-0.5.md).
 
 This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
@@ -216,7 +216,7 @@ plan: {
 }
 ```
 
-See [docs/tron-encoding.md](docs/tron-encoding.md) for the full format reference.
+See [tron-encoding.md](tron-encoding.md) for the full format reference.
 
 ---
 
@@ -249,7 +249,7 @@ python validation/vbrief_validator.py your-plan.vbrief.json
 
 - [Formal Specification](vbrief-spec-0.5.md)
 - [Migration Guide](MIGRATION.md) — v0.4 → v0.5
-- [TRON Encoding](docs/tron-encoding.md)
-- [Examples](examples/)
-- [JSON Schema](schemas/vbrief-core.schema.json)
+- [TRON Encoding](tron-encoding.md)
+- [Examples](../examples/)
+- [JSON Schema](../schemas/vbrief-core.schema.json)
 - [Issues](https://github.com/visionik/vBRIEF/issues)

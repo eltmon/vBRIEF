@@ -3,7 +3,7 @@
 **Status**: Draft  
 **Date**: 2026-03-30  
 **Author**: Jonathan Taylor  
-**Extends**: [vBRIEF Specification v0.5](../vbrief-spec-0.5.md)
+**Extends**: [vBRIEF Specification v0.5](vbrief-spec-0.5.md)
 
 ## Abstract
 
@@ -415,7 +415,7 @@ graph LR
 
 ### 5.5 Graph Constraints
 
-All constraints from [vBRIEF v0.5 Section 6.4](../vbrief-spec-0.5.md#64-graph-constraints) apply:
+All constraints from [vBRIEF v0.5 Section 6.4](vbrief-spec-0.5.md#64-graph-constraints) apply:
 
 1. Edges MUST form a valid DAG. Cycles are prohibited.
 2. `from` and `to` MUST reference existing item IDs.
@@ -871,7 +871,7 @@ plan: {
 
 ### 12.3 Conformance
 
-TRON encoding of Workflow Profile documents follows the same rules as [vBRIEF v0.5 Section 7.3](../vbrief-spec-0.5.md#73-conformance): round-trip conversion MUST preserve all data, and JSON remains the canonical serialization.
+TRON encoding of Workflow Profile documents follows the same rules as [vBRIEF v0.5 Section 7.3](vbrief-spec-0.5.md#73-conformance):
 
 ---
 
@@ -890,7 +890,7 @@ A vBRIEF v0.5 document uses the Workflow Profile if ANY of the following are tru
 
 A document is Workflow Profile conformant if and only if:
 
-1. It is a valid vBRIEF v0.5 document (satisfies all [core conformance criteria](../vbrief-spec-0.5.md#81-conformance-criteria)).
+1. It is a valid vBRIEF v0.5 document (satisfies all [core conformance criteria](vbrief-spec-0.5.md#81-conformance-criteria)).
 2. If `workflow` is present, it is an object with the fields defined in [Section 3](#3-workflow-object).
 3. If `nodeType` is present on any PlanItem, it is a non-empty string.
 4. If `ports` is present, `ports.in` is an array of strings and `ports.out` is an array of port descriptor objects.
@@ -915,7 +915,7 @@ Implementations SHOULD support three validation levels:
 
 ## 14. Security Considerations
 
-In addition to [vBRIEF v0.5 Section 9](../vbrief-spec-0.5.md#9-security-considerations):
+In addition to [vBRIEF v0.5 Section 9](vbrief-spec-0.5.md#9-security-considerations):
 
 1. **No inline secrets.** The `credentials` field MUST reference credentials by name or ID. Implementations MUST NOT store secrets directly in `parameters` or `variables`. Secrets SHOULD be resolved at execution time from a secure credential store.
 
@@ -1552,8 +1552,8 @@ Implementations MAY provide conversion utilities. The specification does not man
 ## References
 
 - **[RFC 2119]** Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, March 1997.
-- **[vBRIEF v0.5 Specification]** — [vbrief-spec-0.5.md](../vbrief-spec-0.5.md)
-- **[vBRIEF User Guide]** — [GUIDE.md](../GUIDE.md)
+- **[vBRIEF v0.5 Specification]** — [vbrief-spec-0.5.md](vbrief-spec-0.5.md)
+- **[vBRIEF User Guide]** — [GUIDE.md](GUIDE.md)
 - **[vBRIEF JSON Schema]** — [schemas/vbrief-core.schema.json](../schemas/vbrief-core.schema.json)
 - **[vBRIEF TRON Encoding]** — [docs/tron-encoding.md](tron-encoding.md)
 - **[n8n Documentation]** — <https://docs.n8n.io/>

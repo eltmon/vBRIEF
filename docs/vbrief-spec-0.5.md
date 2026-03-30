@@ -304,7 +304,7 @@ Custom edge type strings are permitted beyond the four core types. Implementatio
 
 TRON (Token-Reduced Object Notation) is an alternative serialization of vBRIEF documents optimized for LLM context windows. TRON achieves approximately 35–40% token reduction compared to equivalent JSON by using positional class constructors and omitting redundant syntax.
 
-See [docs/tron-encoding.md](docs/tron-encoding.md) for the complete TRON format specification.
+See [tron-encoding.md](tron-encoding.md) for the complete TRON format specification.
 
 ### 7.2 Class Definitions
 
@@ -370,9 +370,9 @@ A document is vBRIEF v0.5 conformant if and only if:
 ## 10. References
 
 - **[RFC 2119]** Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, March 1997.
-- **[vBRIEF TRON Encoding Guide]** — [docs/tron-encoding.md](docs/tron-encoding.md)
+- **[vBRIEF TRON Encoding Guide]** — [tron-encoding.md](tron-encoding.md)
 - **[vBRIEF User Guide]** — [GUIDE.md](GUIDE.md)
-- **[vBRIEF JSON Schema]** — [schemas/vbrief-core.schema.json](schemas/vbrief-core.schema.json)
+- **[vBRIEF JSON Schema]** — [../schemas/vbrief-core.schema.json](../schemas/vbrief-core.schema.json)
 
 [rfc2119]: https://www.rfc-editor.org/rfc/rfc2119
 
@@ -380,7 +380,7 @@ A document is vBRIEF v0.5 conformant if and only if:
 
 ## Appendix A: JSON Schema Reference
 
-The normative JSON Schema for vBRIEF v0.5 is located at [`schemas/vbrief-core.schema.json`](schemas/vbrief-core.schema.json).
+The normative JSON Schema for vBRIEF v0.5 is located at [`schemas/vbrief-core.schema.json`](../schemas/vbrief-core.schema.json).
 
 Implementations SHOULD use this schema for validation. The schema defines all REQUIRED fields, enum constraints, and structural rules specified in this document.
 
@@ -388,11 +388,11 @@ Implementations SHOULD use this schema for validation. The schema defines all RE
 
 ## Appendix B: Complete Examples
 
-The following examples demonstrate graduated complexity. Each is available in both JSON and TRON format in the [`examples/`](examples/) directory.
+The following examples demonstrate graduated complexity. Each is available in both JSON and TRON format in the [`examples/`](../examples/) directory.
 
 ### B.1 Minimal Plan
 
-**JSON** ([`examples/minimal-plan.vbrief.json`](examples/minimal-plan.vbrief.json)):
+**JSON** ([`examples/minimal-plan.vbrief.json`](../examples/minimal-plan.vbrief.json)):
 
 ```json
 {
@@ -410,7 +410,7 @@ The following examples demonstrate graduated complexity. Each is available in bo
 
 ### B.2 Structured Plan with Narratives
 
-**JSON** ([`examples/structured-plan.vbrief.json`](examples/structured-plan.vbrief.json)):
+**JSON** ([`examples/structured-plan.vbrief.json`](../examples/structured-plan.vbrief.json)):
 
 ```json
 {
@@ -435,11 +435,11 @@ The following examples demonstrate graduated complexity. Each is available in bo
 
 ### B.3 Retrospective Plan
 
-See [`examples/retrospective-plan.vbrief.json`](examples/retrospective-plan.vbrief.json) for a full incident postmortem example using `Outcome`, `Strengths`, `Weaknesses`, and `Lessons` narratives.
+See [`examples/retrospective-plan.vbrief.json`](../examples/retrospective-plan.vbrief.json) for a full incident postmortem
 
 ### B.4 DAG Plan
 
-**JSON** ([`examples/dag-plan.vbrief.json`](examples/dag-plan.vbrief.json)):
+**JSON** ([`examples/dag-plan.vbrief.json`](../examples/dag-plan.vbrief.json)):
 
 ```json
 {
@@ -464,7 +464,7 @@ See [`examples/retrospective-plan.vbrief.json`](examples/retrospective-plan.vbri
 }
 ```
 
-**TRON** ([`examples/dag-plan.vbrief.tron`](examples/dag-plan.vbrief.tron)):
+**TRON** ([`examples/dag-plan.vbrief.tron`](../examples/dag-plan.vbrief.tron)):
 
 ```tron
 class Edge: from, to, type

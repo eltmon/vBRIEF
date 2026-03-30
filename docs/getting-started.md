@@ -155,6 +155,6 @@ The validator checks:
 
 ## Next Steps
 
-- **[GUIDE.md](../GUIDE.md)** — Patterns and recipes for common use cases
-- **[vbrief-spec-0.5.md](../vbrief-spec-0.5.md)** — Formal specification
+- **[GUIDE.md](GUIDE.md)** — Patterns and recipes for common use cases
+- **[vbrief-spec-0.5.md](vbrief-spec-0.5.md)** — Formal specification
 - **[examples/](../examples/)** — More examples in JSON and TRON
