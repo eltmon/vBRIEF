@@ -72,8 +72,8 @@ _DOCUMENT_FIELD_ORDER = ["vBRIEFInfo", "plan"]
 class PlanItem:
     """Plan item model with unknown-field preservation."""
 
-    title: Any = ""
-    status: Any = ""
+    title: str = ""
+    status: str = ""
     id: Any = None
     uid: Any = None
     narrative: Any = None
@@ -144,6 +144,8 @@ class PlanItem:
 
         sub_items = data.get("subItems")
         if isinstance(sub_items, list):
+            # Non-Mapping entries are intentionally skipped (lenient parse);
+            # validation will flag them via ISSUE_INVALID_ITEM_TYPE.
             item.subItems = [cls.from_dict(x) for x in sub_items if isinstance(x, Mapping)]
         return item
 
@@ -162,8 +164,8 @@ class PlanItem:
 class Plan:
     """Plan model with nested items and unknown-field preservation."""
 
-    title: Any = ""
-    status: Any = ""
+    title: str = ""
+    status: str = ""
     items: list[PlanItem] = field(default_factory=list)
     id: Any = None
     uid: Any = None
@@ -244,8 +246,13 @@ class VBriefDocument:
     _field_order: list[str] = field(default_factory=list, repr=False)
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any], *, strict: bool = False) -> VBriefDocument:
-        """Create document from dict and optionally validate in strict mode."""
+    def from_dict(cls, data: Mapping[str, Any], *, strict: bool = False, dag: bool = False) -> VBriefDocument:
+        """Create document from a plain dict.
+
+        This is a supported public convenience helper alongside ``from_file``
+        and ``from_json``.  Pass ``strict=True`` to raise on validation errors.
+        Pass ``dag=True`` to also validate that plan.edges form a DAG.
+        """
         if not isinstance(data, Mapping):
             data = {}
 
@@ -266,22 +273,22 @@ class VBriefDocument:
         )
 
         if strict:
-            report = doc.validate()
+            report = doc.validate(dag=dag)
             _raise_if_invalid(report)
 
         return doc
 
     @classmethod
-    def from_json(cls, text: str, *, strict: bool = False) -> VBriefDocument:
+    def from_json(cls, text: str, *, strict: bool = False, dag: bool = False) -> VBriefDocument:
         """Create document from JSON string."""
         data = parse_json(text)
-        return cls.from_dict(data, strict=strict)
+        return cls.from_dict(data, strict=strict, dag=dag)
 
     @classmethod
-    def from_file(cls, path: str | Path, *, strict: bool = False) -> VBriefDocument:
+    def from_file(cls, path: str | Path, *, strict: bool = False, dag: bool = False) -> VBriefDocument:
         """Create document from JSON file."""
         data = load_json_file(path)
-        return cls.from_dict(data, strict=strict)
+        return cls.from_dict(data, strict=strict, dag=dag)
 
     def to_dict(self, *, preserve_order: bool = False) -> dict[str, Any]:
         """Convert model to dict while preserving extras."""
@@ -312,11 +319,14 @@ class VBriefDocument:
         payload = self.to_dict(preserve_order=preserve_format)
         dump_json_file(path, payload, canonical=canonical, preserve_format=preserve_format)
 
-    def validate(self) -> ValidationReport:
-        """Validate this document and return structured issues."""
+    def validate(self, *, dag: bool = False) -> ValidationReport:
+        """Validate this document and return structured issues.
+
+        Pass ``dag=True`` to also check that plan.edges form a DAG.
+        """
         from libvbrief.validation import validate_document
 
-        return validate_document(self)
+        return validate_document(self, dag=dag)
 
 
 def _known_item_values(item: PlanItem, *, preserve_order: bool) -> dict[str, Any]:

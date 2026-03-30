@@ -27,6 +27,16 @@ tasks:
     cmds:
       - python validation/vbrief_validator.py examples/*.vbrief.json
 
+  python:test:
+    desc: Run libvbrief Python tests
+    cmds:
+      - .venv/bin/python -m pytest tests/ -v
+
+  python:coverage:
+    desc: Run libvbrief Python tests with coverage report
+    cmds:
+      - .venv/bin/python -m pytest tests/ --cov=libvbrief --cov-report=term-missing --cov-fail-under=85
+
   git:hooks:install:
     desc: Install local git hooks (pre-commit + commit-msg)
     cmds:

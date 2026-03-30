@@ -35,6 +35,28 @@ def test_file_io_round_trip(tmp_path) -> None:
     assert loaded == source
 
 
+def test_load_file_strict_raises(tmp_path) -> None:
+    bad = {"vBRIEFInfo": {"version": "0.4"}, "plan": {"title": "x", "status": "oops", "items": []}}
+    path = tmp_path / "bad.vbrief.json"
+    dump_file(bad, path)
+
+    with pytest.raises(ValidationError):
+        load_file(path, strict=True)
+
+
+def test_dumps_with_model_object() -> None:
+    from libvbrief import VBriefDocument
+
+    model = VBriefDocument.from_dict({
+        "vBRIEFInfo": {"version": "0.5"},
+        "plan": {"title": "M", "status": "draft", "items": []},
+    })
+
+    text = dumps(model)
+
+    assert json.loads(text)["plan"]["title"] == "M"
+
+
 def test_dumps_preserve_mode_keeps_insertion_order() -> None:
     doc = {
         "vBRIEFInfo": {"version": "0.5"},
@@ -52,3 +74,31 @@ def test_dumps_preserve_mode_keeps_insertion_order() -> None:
     z_index = rendered.index('"z"')
     a_index = rendered.index('"a"')
     assert z_index < a_index
+
+
+def test_dumps_coerce_to_dict_no_preserve_order_kwarg() -> None:
+    """Object whose to_dict() doesn't accept preserve_order falls back gracefully (io.py:69-70)."""
+    class NoKwarg:
+        def to_dict(self) -> dict:  # noqa: ANN001
+            return {
+                "vBRIEFInfo": {"version": "0.5"},
+                "plan": {"title": "NK", "status": "running", "items": []},
+            }
+
+    text = dumps(NoKwarg())
+
+    assert json.loads(text)["plan"]["title"] == "NK"
+
+
+def test_dumps_coerce_to_dict_no_to_dict_raises_type_error() -> None:
+    """Object with no to_dict() raises TypeError (io.py:72)."""
+    with pytest.raises(TypeError, match="document must be a mapping or provide to_dict"):
+        dumps(object())
+
+
+def test_parse_json_non_dict_raises_value_error() -> None:
+    """parse_json raises ValueError when the root JSON value is not an object (json_codec.py:16)."""
+    from libvbrief.serialization.json_codec import parse_json
+
+    with pytest.raises(ValueError, match="vBRIEF JSON document must be an object"):
+        parse_json("[1, 2, 3]")

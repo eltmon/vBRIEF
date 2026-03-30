@@ -25,8 +25,13 @@ from libvbrief.compat import (
 from libvbrief.issues import ValidationReport
 
 
-def validate_document(document: Any) -> ValidationReport:
-    """Validate dict or model document and return structured issues."""
+def validate_document(document: Any, *, dag: bool = False) -> ValidationReport:
+    """Validate dict or model document and return structured issues.
+
+    Pass ``dag=True`` to also check that plan.edges form a DAG (no dangling
+    references and no cycles).  DAG checks are skipped when ``dag=False``
+    (the default) to preserve backward compatibility.
+    """
     report = ValidationReport()
     data = _to_dict(document)
 
@@ -39,6 +44,13 @@ def validate_document(document: Any) -> ValidationReport:
         return report
 
     _validate_root(data, report)
+
+    if dag:
+        plan = data.get("plan")
+        if isinstance(plan, Mapping):
+            from libvbrief.dag import validate_plan_dag
+            validate_plan_dag(plan, report)
+
     return report
 
 

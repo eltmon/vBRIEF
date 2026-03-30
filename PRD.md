@@ -1,21 +1,13 @@
-# Product Requirements Document: vBRIEF specification refactor
+# Product Requirements Document: libvbrief.py
 
-**Generated**: 2026-02-03
+**Generated**: 2026-02-23
 **Status**: Ready for AI Interview
 
 ## Initial Input
 
-**Project Description**: explore doing three things:
+**Project Description**: python implementation of a simple, sane, idiompotic, python library to read and write vBRIEF files
 
-1. Eliminate todo lists.  Todo lists are just simple plans.
-2. Add a directed acylic graph cability to plans / planitems
-3. implement playbooks as plans + DAG's
-
-see https://github.com/visionik/deft-universe/tree/main/docs/promptgraph-2*.md for examples.
-
-TL;DR we want to turn vBRIEF Into a single plan "object" which can do todo lists, plans, playbooks, and promptgraphs.  
-
-**I want to build vBRIEF specification refactor that has the following features:**
+**I want to build libvbrief.py that has the following features:**
 
 ---
 
@@ -28,7 +20,7 @@ Legend (from RFC2119): !=MUST, ~=SHOULD, ≉=SHOULD NOT, ⊗=MUST NOT, ?=MAY.
 ## Input Template
 
 ```
-I want to build vBRIEF specification refactor that has the following features:
+I want to build libvbrief.py that has the following features:
 1. [feature]
 2. [feature]
 ...
@@ -120,3 +112,58 @@ N. [feature]
 - ⊗ Missing dependencies
 - ⊗ Sequential tasks that could be parallel
 
+
+---
+
+## Interview Log (Appended)
+
+**Q1: v1 scope for libvbrief.py**
+- Option selected: 1 (Plan JSON core only)
+- Answer: Use current v0.5 Plan JSON core; ignore old formats; TRON deferred.
+
+**Q2: API style for v1**
+- Option selected: 3 (both dict helpers and class model)
+- Answer: Provide both functional dict API and object model API.
+
+**Q3: Validation behavior on load/save**
+- Option selected: B (lenient load + explicit validate)
+- Answer: Parsing is lenient; caller uses `validate()` for conformance checks.
+
+**Q4: Internal model implementation approach**
+- Option selected: A (`dataclasses` + custom validators)
+- Answer: Use dataclasses, not pydantic, for v1 core.
+
+**Q5: Package/module layout depth**
+- Option selected: C (full layered package now)
+- Answer: Build layered package layout in v1.
+
+**Q6: Python version support target**
+- Option selected: A (Python 3.10+)
+- Answer: Support Python >=3.10.
+
+**Q7: `validate()` error reporting contract**
+- Option selected: A (structured issues list)
+- Answer: Return structured errors/warnings with code/path/message/severity.
+
+**Q8: Unknown-field handling policy**
+- Option selected: A (preserve all unknown fields at every level)
+- Answer: Preserve unknown keys at root, plan, and item levels.
+
+**Q9: Write/formatting policy**
+- Option selected: A (canonical writer + optional preserve mode)
+- Answer: Canonical output by default; optional preserve formatting mode.
+
+**Q10: CLI scope for v1**
+- Option selected: A (library-only)
+- Answer: No CLI in v1.
+
+**Q11: Conformance scope for v1 validation**
+- Option selected: A (core structural + conformance only)
+- Answer: No DAG cycle/reference checks in v1.
+
+**Q12: Release target for v1**
+- Option selected: A (local/dev package first)
+- Answer: Local package deliverable first; publish later.
+
+**Additional statement captured**
+- TRON support is planned later via `libtronpy` from `~/Projects/...`.

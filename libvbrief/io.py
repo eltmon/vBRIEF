@@ -50,9 +50,12 @@ def dump_file(
     dump_json_file(path, payload, canonical=canonical, preserve_format=preserve_format)
 
 
-def validate(document: Mapping[str, Any] | Any) -> ValidationReport:
-    """Validate a dict document or model object."""
-    return validate_document(document)
+def validate(document: Mapping[str, Any] | Any, *, dag: bool = False) -> ValidationReport:
+    """Validate a dict document or model object.
+
+    Pass ``dag=True`` to also check that plan.edges form a DAG.
+    """
+    return validate_document(document, dag=dag)
 
 
 def _coerce_to_dict(document: Mapping[str, Any] | Any, *, preserve_order: bool) -> dict[str, Any]:

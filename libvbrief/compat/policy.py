@@ -37,3 +37,8 @@ ISSUE_INVALID_ITEM_STATUS: Final[str] = "invalid_item_status"
 ISSUE_INVALID_ID_FORMAT: Final[str] = "invalid_id_format"
 ISSUE_INVALID_PLANREF: Final[str] = "invalid_planref"
 ISSUE_INVALID_SUBITEMS_TYPE: Final[str] = "invalid_subitems_type"
+
+# DAG validation issue codes (used when dag=True is passed to validate)
+ISSUE_INVALID_EDGE_STRUCTURE: Final[str] = "invalid_edge_structure"
+ISSUE_DANGLING_EDGE_REF: Final[str] = "dangling_edge_ref"
+ISSUE_DAG_CYCLE: Final[str] = "dag_cycle"

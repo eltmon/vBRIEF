@@ -31,4 +31,4 @@ packages = ["libvbrief", "libvbrief.serialization", "libvbrief.compat"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
+python_files = ["test_*.py", "test-*.py", "*_test.py"]
