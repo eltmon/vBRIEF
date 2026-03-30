@@ -51,6 +51,7 @@ Start simple. Add structure only when you need it.
 | [GUIDE.md](GUIDE.md) | Reference guide with patterns and recipes |
 | [docs/getting-started.md](docs/getting-started.md) | Tutorial for beginners |
 | [docs/tron-encoding.md](docs/tron-encoding.md) | TRON format reference |
+| [docs/vbrief-workflow-profile.md](docs/vbrief-workflow-profile.md) | Workflow Profile extension (flow-based programming) |
 | [MIGRATION.md](MIGRATION.md) | v0.4 → v0.5 migration guide |
 
 ## Repo Structure
