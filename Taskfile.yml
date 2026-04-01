@@ -9,33 +9,70 @@ tasks:
 
   test:
     desc: Run all tests
-    cmds:
-      - pytest tests/
+    deps:
+      - python:test
+      - ts:test
 
   fmt:
     desc: Format all Python code
     cmds:
-      - ruff format .
+      - uv run --with ruff ruff format .
 
   lint:
     desc: Lint all Python code
     cmds:
-      - ruff check .
+      - uv run --with ruff ruff check .
 
   validate:
     desc: Validate all example documents
     cmds:
-      - python validation/vbrief_validator.py examples/*.vbrief.json
+      - uv run --extra dev python validation/vbrief_validator.py examples/*.vbrief.json
 
   python:test:
     desc: Run libvbrief Python tests
     cmds:
-      - .venv/bin/python -m pytest tests/ -v
+      - uv run --extra dev pytest tests/ -v
 
   python:coverage:
     desc: Run libvbrief Python tests with coverage report
     cmds:
-      - .venv/bin/python -m pytest tests/ --cov=libvbrief --cov-report=term-missing --cov-fail-under=85
+      - uv run --extra dev pytest tests/ --cov=libvbrief --cov-report=term-missing --cov-fail-under=85
+
+  ts:install:
+    desc: Install libvbrief-ts dependencies
+    dir: libvbrief-ts
+    cmds:
+      - npm install
+
+  ts:typecheck:
+    desc: Run libvbrief-ts type checking
+    dir: libvbrief-ts
+    cmds:
+      - npm run typecheck
+
+  ts:lint:
+    desc: Run libvbrief-ts lint checks
+    dir: libvbrief-ts
+    cmds:
+      - npm run lint
+
+  ts:test:
+    desc: Run libvbrief-ts tests
+    dir: libvbrief-ts
+    cmds:
+      - npm run test
+
+  ts:coverage:
+    desc: Run libvbrief-ts tests with coverage
+    dir: libvbrief-ts
+    cmds:
+      - npm run test:coverage
+
+  ts:build:
+    desc: Build the libvbrief-ts package
+    dir: libvbrief-ts
+    cmds:
+      - npm run build
 
   git:hooks:install:
     desc: Install local git hooks (pre-commit + commit-msg)

@@ -53,6 +53,7 @@ Start simple. Add structure only when you need it.
 | [docs/tron-encoding.md](docs/tron-encoding.md) | TRON format reference |
 | [docs/vbrief-workflow-profile.md](docs/vbrief-workflow-profile.md) | Workflow Profile extension (flow-based programming) |
 | [docs/MIGRATION.md](docs/MIGRATION.md) | v0.4 → v0.5 migration guide |
+| [libvbrief-ts/README.md](libvbrief-ts/README.md) | TypeScript package usage and examples |
 
 ## Repo Structure
 
@@ -62,23 +63,70 @@ vBRIEF/
 ├── examples/              # Graduated complexity examples (JSON + TRON)
 ├── schemas/               # JSON Schema
 ├── libvbrief/             # Python library
+├── libvbrief-ts/          # TypeScript library + examples
 ├── validation/            # Validators
 ├── tests/                 # Test suite
 └── history/               # Archived drafts and old docs
 ```
 
 ## Install
+Python library:
 
 ```bash
 pip install libvbrief
 ```
+TypeScript package from this repo:
 
-Or from source:
+```bash
+npm install ./libvbrief-ts
+```
+
+From a fresh clone:
 
 ```bash
 git clone https://github.com/visionik/vBRIEF.git
 cd vBRIEF
 pip install -e .
+npm install ./libvbrief-ts
+```
+
+## Library Quick Examples
+
+TypeScript parsing and validation:
+
+```ts
+import { loads, validate } from "libvbrief-ts";
+
+const document = loads(`{
+  "vBRIEFInfo": { "version": "0.5" },
+  "plan": {
+    "title": "Release Checklist",
+    "status": "running",
+    "items": [{ "title": "Ship TypeScript port", "status": "pending" }]
+  }
+}`);
+
+const report = validate(document);
+console.log(report.isValid);
+```
+
+TypeScript builder API:
+
+```ts
+import { PlanBuilder } from "libvbrief-ts";
+
+const builder = new PlanBuilder("Ship libvbrief-ts", { status: "running" });
+builder.addNarrative("Proposal", "Deliver a TypeScript port with Python parity");
+
+const implement = builder.addItem("Implement package");
+implement.addSubitem("Add schemas");
+implement.addSubitem("Add tests");
+
+builder.addItem("Write docs");
+builder.addEdgesFrom([["implement-package", "write-docs", "blocks"]]);
+
+const document = builder.toDocument();
+console.log(document.toJson());
 ```
 
 ## Validate
