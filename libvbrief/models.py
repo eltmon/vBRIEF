@@ -104,6 +104,34 @@ class PlanItem:
     _field_order: list[str] = field(default_factory=list, repr=False)
 
     @classmethod
+    def pending(cls, title: str, **kwargs: Any) -> PlanItem:
+        """Create a PlanItem with status='pending'."""
+        return cls(title=title, status="pending", **kwargs)
+
+    @classmethod
+    def running(cls, title: str, **kwargs: Any) -> PlanItem:
+        """Create a PlanItem with status='running'."""
+        return cls(title=title, status="running", **kwargs)
+
+    # NOTE: PlanItem.completed() factory is defined AFTER the class body to
+    # avoid shadowing the dataclass ``completed`` field default.  See below.
+
+    @classmethod
+    def blocked(cls, title: str, **kwargs: Any) -> PlanItem:
+        """Create a PlanItem with status='blocked'."""
+        return cls(title=title, status="blocked", **kwargs)
+
+    @classmethod
+    def cancelled(cls, title: str, **kwargs: Any) -> PlanItem:
+        """Create a PlanItem with status='cancelled'."""
+        return cls(title=title, status="cancelled", **kwargs)
+
+    @classmethod
+    def draft(cls, title: str, **kwargs: Any) -> PlanItem:
+        """Create a PlanItem with status='draft'."""
+        return cls(title=title, status="draft", **kwargs)
+
+    @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> PlanItem:
         """Create a PlanItem from a mapping."""
         if not isinstance(data, Mapping):
@@ -149,6 +177,7 @@ class PlanItem:
             item.subItems = [cls.from_dict(x) for x in sub_items if isinstance(x, Mapping)]
         return item
 
+
     def to_dict(self, *, preserve_order: bool = False) -> dict[str, Any]:
         """Convert item to dict while preserving unknown fields."""
         known = _known_item_values(self, preserve_order=preserve_order)
@@ -158,6 +187,16 @@ class PlanItem:
             field_order=self._field_order,
             preserve_order=preserve_order,
         )
+
+
+def _plan_item_completed(cls: type[PlanItem], title: str, **kwargs: Any) -> PlanItem:
+    """Create a PlanItem with status='completed'."""
+    return cls(title=title, status="completed", **kwargs)
+
+
+# Attach as classmethod AFTER @dataclass has processed the field defaults,
+# so the ``completed`` timestamp field keeps its ``None`` default.
+PlanItem.completed = classmethod(_plan_item_completed)  # type: ignore[assignment]
 
 
 @dataclass
@@ -436,3 +475,27 @@ def _merge_values(
 def _raise_if_invalid(report: ValidationReport) -> None:
     if not report.is_valid:
         raise ValidationError(report)
+
+
+class _StatusFactory:
+    """Descriptor providing PlanItem.<status>(...) factories without shadowing fields."""
+
+    def __init__(self, status: str) -> None:
+        self._status = status
+
+    def __get__(self, obj: Any, owner: type[PlanItem] | None = None) -> Any:
+        if owner is None:
+            owner = PlanItem
+
+        def factory(title: str, **kwargs: Any) -> PlanItem:
+            return owner(title=title, status=self._status, **kwargs)
+
+        return factory
+
+
+PlanItem.pending = _StatusFactory("pending")
+PlanItem.running = _StatusFactory("running")
+PlanItem.completed = _StatusFactory("completed")
+PlanItem.blocked = _StatusFactory("blocked")
+PlanItem.cancelled = _StatusFactory("cancelled")
+PlanItem.draft = _StatusFactory("draft")

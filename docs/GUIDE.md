@@ -1,7 +1,7 @@
-# vBRIEF v0.5 Reference Guide
+# vBRIEF v0.6 Reference Guide
 
 > **New to vBRIEF?** Start with [getting-started.md](getting-started.md) for a hands-on tutorial.  
-> For the formal specification, see [vbrief-spec-0.5.md](vbrief-spec-0.5.md).
+> For the formal specification, see [vbrief-spec-0.6.md](vbrief-spec-0.6.md).
 
 This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
@@ -13,7 +13,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "Sprint Tasks",
     "status": "running",
@@ -31,7 +31,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "api-migration",
     "title": "API Migration to GraphQL",
@@ -56,7 +56,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "incident-2026-02-02",
     "title": "Database Outage Postmortem",
@@ -92,7 +92,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "ci-pipeline",
     "title": "CI Pipeline",
@@ -118,7 +118,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "RFC: Microservices Architecture",
     "status": "proposed",
@@ -141,7 +141,7 @@ This guide is a cookbook of patterns and recipes for common vBRIEF use cases.
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "v2.0 Release",
     "status": "running",
@@ -200,7 +200,7 @@ For token efficiency in AI workflows, use TRON encoding. A typical plan saves 35
 class Edge: from, to, type
 class PlanItem: id, title, status
 
-vBRIEFInfo: { version: "0.5" }
+vBRIEFInfo: { version: "0.6" }
 plan: {
   title: "Build Pipeline",
   status: "running",
@@ -247,9 +247,9 @@ python validation/vbrief_validator.py your-plan.vbrief.json
 
 ## Further Reading
 
-- [Formal Specification](vbrief-spec-0.5.md)
-- [Migration Guide](MIGRATION.md) — v0.4 → v0.5
+- [Formal Specification](vbrief-spec-0.6.md)
+- [Migration Guide](MIGRATION.md) — v0.4 → v0.5 and v0.5 → v0.6
 - [TRON Encoding](tron-encoding.md)
 - [Examples](../examples/)
-- [JSON Schema](../schemas/vbrief-core.schema.json)
+- [JSON Schema](../schemas/vbrief-core-0.6.schema.json)
 - [Issues](https://github.com/visionik/vBRIEF/issues)

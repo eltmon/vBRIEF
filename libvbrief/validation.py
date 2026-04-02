@@ -6,6 +6,7 @@ from typing import Any, Mapping
 
 from libvbrief.compat import (
     HIERARCHICAL_ID_PATTERN,
+    ISSUE_DUPLICATE_ITEM_ID,
     ISSUE_INVALID_DOCUMENT_TYPE,
     ISSUE_INVALID_ID_FORMAT,
     ISSUE_INVALID_ITEM_STATUS,
@@ -128,10 +129,15 @@ def _validate_plan(plan: Mapping[str, Any], report: ValidationReport) -> None:
         )
         return
 
-    _validate_items(items, report, "plan.items")
+    _validate_items(items, report, "plan.items", seen_ids=set())
 
-
-def _validate_items(items: list[Any], report: ValidationReport, path: str) -> None:
+def _validate_items(
+    items: list[Any],
+    report: ValidationReport,
+    path: str,
+    *,
+    seen_ids: set[str],
+) -> None:
     for index, item in enumerate(items):
         item_path = f"{path}[{index}]"
 
@@ -172,6 +178,15 @@ def _validate_items(items: list[Any], report: ValidationReport, path: str) -> No
                 f"{item_path}.id",
                 "item id must match hierarchical ID pattern",
             )
+        elif isinstance(item_id, str):
+            if item_id in seen_ids:
+                report.add_error(
+                    ISSUE_DUPLICATE_ITEM_ID,
+                    f"{item_path}.id",
+                    f"Duplicate item id {item_id!r}",
+                )
+            else:
+                seen_ids.add(item_id)
 
         plan_ref = item.get("planRef")
         if plan_ref is not None and (not isinstance(plan_ref, str) or not PLAN_REF_PATTERN.match(plan_ref)):
@@ -192,7 +207,7 @@ def _validate_items(items: list[Any], report: ValidationReport, path: str) -> No
             )
             continue
 
-        _validate_items(sub_items, report, f"{item_path}.subItems")
+        _validate_items(sub_items, report, f"{item_path}.subItems", seen_ids=seen_ids)
 
 
 def _to_dict(document: Any) -> Any:

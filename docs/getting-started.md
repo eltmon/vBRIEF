@@ -8,7 +8,7 @@ Create a file called `my-plan.vbrief.json`:
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "Weekend Errands",
     "status": "running",
@@ -23,9 +23,9 @@ Create a file called `my-plan.vbrief.json`:
 
 That's a valid vBRIEF document. Only four fields are required:
 
-- `vBRIEFInfo.version` — must be `"0.5"`
+- `vBRIEFInfo.version` — must be `"0.6"`
 - `plan.title` — any descriptive name
-- `plan.status` — one of: `draft`, `proposed`, `approved`, `pending`, `running`, `completed`, `blocked`, `cancelled`
+- `plan.status` — one of: `draft`, `proposed`, `approved`, `pending`, `running`, `completed`, `blocked`, `failed`, `cancelled`
 - `plan.items` — array of items (can be empty)
 
 ## 2. Adding Narratives for Context
@@ -34,7 +34,7 @@ Narratives let you capture the *why* behind a plan. Add a `narratives` object to
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "API Redesign",
     "status": "proposed",
@@ -76,7 +76,7 @@ When tasks depend on each other, add `edges` to model the workflow:
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "title": "Release Pipeline",
     "status": "running",
@@ -115,7 +115,7 @@ TRON reduces token usage by ~35–40%. Convert the pipeline example above:
 class Edge: from, to, type
 class PlanItem: id, title, status
 
-vBRIEFInfo: { version: "0.5" }
+vBRIEFInfo: { version: "0.6" }
 plan: {
   title: "Release Pipeline",
   status: "running",
@@ -156,5 +156,5 @@ The validator checks:
 ## Next Steps
 
 - **[GUIDE.md](GUIDE.md)** — Patterns and recipes for common use cases
-- **[vbrief-spec-0.5.md](vbrief-spec-0.5.md)** — Formal specification
+- **[vbrief-spec-0.6.md](vbrief-spec-0.6.md)** — Formal specification
 - **[examples/](../examples/)** — More examples in JSON and TRON

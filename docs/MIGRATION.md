@@ -1,11 +1,93 @@
-# Migration Guide: vBRIEF v0.4 → v0.5
+# Migration Guide: vBRIEF v0.4 → v0.5 and v0.5 → v0.6
 
-**Date**: 2026-02-03  
+**Date**: 2026-03-31  
 **Status**: Final
 
 ## Overview
 
-vBRIEF v0.5 represents a major architectural refactor that unifies todos, plans, and playbooks into a single Plan model with DAG capabilities. This guide helps you migrate existing v0.4 documents.
+vBRIEF v0.5 represents a major architectural refactor that unifies todos, plans, and playbooks into a single Plan model with DAG capabilities. This guide helps you migrate existing v0.4 documents to v0.5 and existing v0.5 documents to v0.6.
+
+## v0.5 → v0.6 Migration
+
+vBRIEF v0.6 is a smaller upgrade than v0.5, but it adds one important new status and standardizes nested PlanItem hierarchies on `items`.
+
+### Changes Summary
+
+| Change | Impact | Migration Path |
+|--------|--------|----------------|
+| `vBRIEFInfo.version` updated | All v0.6 documents must declare the new version | Change `"0.5"` to `"0.6"` |
+| `failed` status added | New terminal failure state available | Emit `failed` instead of overloading `blocked` when work ends unsuccessfully |
+| `items` preferred on PlanItem | Nested child arrays should use `items` going forward | Rename `subItems` to `items` when writing v0.6 |
+| `subItems` retained as alias | No immediate break for older producers | Readers SHOULD continue accepting `subItems` |
+| Workflow Profile now extends v0.6 | Workflow docs/examples should target the new core version | Update profile-based documents and examples to `"0.6"` |
+
+### Quick Migration Checklist
+
+- [ ] Update `vBRIEFInfo.version` from `"0.5"` to `"0.6"`
+- [ ] Treat `failed` as the terminal unsuccessful status
+- [ ] Continue using `blocked` only for non-terminal impediments and waits
+- [ ] Rename nested `subItems` arrays to `items` in newly written documents
+- [ ] Keep accepting `subItems` when reading legacy documents
+- [ ] Update schema and spec references to the v0.6 artifacts where needed
+
+### Status Semantics: `blocked` vs `failed` vs `cancelled`
+
+Use the statuses as follows:
+
+- `blocked` — Work cannot currently proceed, but may resume later.
+- `failed` — Work has ended unsuccessfully due to an unrecoverable error or exhausted retries.
+- `cancelled` — Work has ended intentionally and will not continue.
+
+**Before v0.6:**
+```json
+{
+  "status": "blocked"
+}
+```
+
+**After v0.6, if the work has actually terminated unsuccessfully:**
+```json
+{
+  "status": "failed"
+}
+```
+
+### Nested PlanItems: `subItems` → `items`
+
+v0.6 standardizes nested PlanItem hierarchies on `items`.
+
+**Legacy v0.5 form:**
+```json
+{
+  "id": "phase1",
+  "title": "Phase 1",
+  "status": "running",
+  "subItems": [
+    { "id": "phase1.task1", "title": "Subtask 1", "status": "completed" }
+  ]
+}
+```
+
+**Preferred v0.6 form:**
+```json
+{
+  "id": "phase1",
+  "title": "Phase 1",
+  "status": "running",
+  "items": [
+    { "id": "phase1.task1", "title": "Subtask 1", "status": "completed" }
+  ]
+}
+```
+
+Compatibility guidance:
+
+- Writers SHOULD emit `items` in v0.6 documents.
+- Readers SHOULD accept either `items` or `subItems`.
+- If both appear on the same PlanItem, treat `items` as canonical and warn or reject if the arrays differ.
+
+---
+
 
 ## Breaking Changes Summary
 

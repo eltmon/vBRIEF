@@ -2,7 +2,7 @@ class Edge: from, to, type
 class PlanItem: id, title, status
 
 vBRIEFInfo: {
-  version: "0.5",
+  version: "0.6",
   created: "2026-02-03T09:00:00Z"
 }
 

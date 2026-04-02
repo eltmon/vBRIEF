@@ -10,8 +10,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from libvbrief import VBriefDocument, dump_file, load_file, loads, validate
 
 

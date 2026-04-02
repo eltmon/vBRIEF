@@ -3,17 +3,17 @@
 **Status**: Draft  
 **Date**: 2026-03-30  
 **Author**: Jonathan Taylor  
-**Extends**: [vBRIEF Specification v0.5](vbrief-spec-0.5.md)
+**Extends**: [vBRIEF Specification v0.6](vbrief-spec-0.6.md)
 
 ## Abstract
 
-This document defines the **Workflow Profile**, an extension to vBRIEF v0.5 that adds flow-based programming primitives to the Plan model. A vBRIEF Plan enriched with the Workflow Profile becomes an executable dataflow graph, compatible with visual workflow engines such as n8n, Node-RED, and similar tools.
+This document defines the **Workflow Profile**, an extension to vBRIEF v0.6 that adds flow-based programming primitives to the Plan model. A vBRIEF Plan enriched with the Workflow Profile becomes an executable dataflow graph, compatible with visual workflow engines such as n8n, Node-RED, and similar tools.
 
-The Workflow Profile is **strictly additive** and **fully backward-compatible**. Documents that omit the new fields remain valid vBRIEF v0.5 Plans.
+The Workflow Profile is **strictly additive** and **fully backward-compatible**. Documents that omit the new fields remain valid vBRIEF v0.6 Plans.
 
 ## Status of This Document
 
-This document specifies a draft extension of vBRIEF v0.5. It is intended for early implementers building workflow runtime integrations. Comments and issues should be filed at <https://github.com/visionik/vBRIEF/issues>.
+This document specifies a draft extension of vBRIEF v0.6. It is intended for early implementers building workflow runtime integrations. Comments and issues should be filed at <https://github.com/visionik/vBRIEF/issues>.
 
 ## Table of Contents
 
@@ -42,7 +42,7 @@ This document specifies a draft extension of vBRIEF v0.5. It is intended for ear
 
 ### 1.1 Purpose
 
-The vBRIEF Workflow Profile bridges the gap between structured planning (what vBRIEF v0.5 already provides) and executable dataflow programming. By adding a small number of optional fields to existing Plan and PlanItem objects, any vBRIEF Plan can graduate from a static dependency graph into a runnable workflow — without breaking compatibility with tools that understand only the core spec.
+The vBRIEF Workflow Profile bridges the gap between structured planning (what vBRIEF v0.6 already provides) and executable dataflow programming. By adding a small number of optional fields to existing Plan and PlanItem objects, any vBRIEF Plan can graduate from a static dependency graph into a runnable workflow — without breaking compatibility with tools that understand only the core spec.
 
 ### 1.2 Terminology
 
@@ -67,9 +67,9 @@ Additional terms specific to this extension:
 The relationship between core vBRIEF and the Workflow Profile:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph TB
-    subgraph "vBRIEF v0.5 Core"
+    subgraph "vBRIEF v0.6 Core"
         Plan["Plan<br/>(title, status, items, edges)"]
         PlanItem["PlanItem<br/>(title, status)"]
         Edge["Edge<br/>(from, to, type)"]
@@ -99,14 +99,14 @@ graph TB
 
 ### 2.1 Backward Compatibility
 
-Every valid Workflow Profile document is also a valid vBRIEF v0.5 document. The extension adds OPTIONAL fields only; it defines no new REQUIRED fields on any existing object.
+Every valid Workflow Profile document is also a valid vBRIEF v0.6 document. The extension adds OPTIONAL fields only; it defines no new REQUIRED fields on any existing object.
 
-A core-only implementation that encounters Workflow Profile fields MUST preserve them (per vBRIEF v0.5 conformance rule 8: "Unknown fields at any level are preserved").
+A core-only implementation that encounters Workflow Profile fields MUST preserve them (per vBRIEF v0.6 conformance rule 9: "Unknown fields at any level are preserved"). Nested item hierarchies SHOULD use `items`; `subItems` remains acceptable when importing legacy documents.
 
 ### 2.2 How Core Concepts Map to Workflow Concepts
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     A["PlanItem"] -->|"+ nodeType"| B["Executable Node"]
     C["Edge (blocks)"] -->|"+ fromPort/toPort"| D["Data Connection"]
@@ -186,7 +186,7 @@ The `settings` object controls runtime behavior:
 ### 3.4 Workflow Lifecycle
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040', 'stateLabelColor': '#000000', 'compositeBackground': '#a0a0a0'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040", "stateLabelColor": "#000000", "compositeBackground": "#a0a0a0"}}}%%
 stateDiagram-v2
     [*] --> draft : create
     draft --> proposed : submit for review
@@ -197,8 +197,10 @@ stateDiagram-v2
     running --> completed : all nodes complete
     running --> blocked : external wait
     blocked --> running : dependency resolved
+    running --> failed : unrecoverable error
     running --> cancelled : abort
     completed --> [*]
+    failed --> [*]
     cancelled --> [*]
 ```
 
@@ -209,7 +211,8 @@ The lifecycle is identical to core vBRIEF Plan status. Workflow runtimes SHOULD 
 - **`running`** — Workflow currently executing.
 - **`completed`** — All nodes finished successfully (or skipped per branching logic).
 - **`blocked`** — Workflow paused on external dependency.
-- **`cancelled`** — Workflow aborted; no further nodes will execute.
+- **`failed`** — Workflow terminated unsuccessfully; no further nodes will execute unless restarted as a new run.
+- **`cancelled`** — Workflow aborted intentionally; no further nodes will execute.
 
 ---
 
@@ -284,7 +287,7 @@ If `ports` is absent and `nodeType` is present:
 Nodes are classified by their behavior in the dataflow graph:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     subgraph "Trigger Nodes"
         T1["scheduleTrigger"]
@@ -346,15 +349,18 @@ graph LR
 When a workflow is running, each node's `status` field reflects its execution state:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040', 'stateLabelColor': '#000000', 'compositeBackground': '#a0a0a0'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040", "stateLabelColor": "#000000", "compositeBackground": "#a0a0a0"}}}%%
 stateDiagram-v2
     [*] --> pending : workflow queued
     pending --> running : inputs satisfied
     running --> completed : success
-    running --> blocked : error + continueOnFail=false
+    running --> blocked : retry wait or external pause
+    running --> failed : unrecoverable error
     blocked --> running : retry
-    blocked --> cancelled : max retries exceeded
+    blocked --> failed : max retries exceeded
+    running --> cancelled : abort
     completed --> [*]
+    failed --> [*]
     cancelled --> [*]
 ```
 
@@ -394,7 +400,7 @@ The Workflow Profile adds one new edge type and redefines the semantics of exist
 A typical workflow with branching and error handling:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     trigger["⏰ Schedule<br/>Trigger"] -->|"main → main"| http["🌐 HTTP<br/>Request"]
     http -->|"main → main"| ifNode{"🔀 IF<br/>amount > 1000"}
@@ -415,7 +421,7 @@ graph LR
 
 ### 5.5 Graph Constraints
 
-All constraints from [vBRIEF v0.5 Section 6.4](vbrief-spec-0.5.md#64-graph-constraints) apply:
+All constraints from [vBRIEF v0.6 Section 6.4](vbrief-spec-0.6.md#64-graph-constraints) apply:
 
 1. Edges MUST form a valid DAG. Cycles are prohibited.
 2. `from` and `to` MUST reference existing item IDs.
@@ -503,7 +509,7 @@ The `annotations` array is OPTIONAL and MAY contain visual annotations (sticky n
 ### 7.1 Execution Order
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 flowchart TD
     Start["Workflow Triggered"] --> FindRoots["Find root nodes<br/>(no incoming data edges)"]
     FindRoots --> ExecRoots["Execute root nodes"]
@@ -540,7 +546,7 @@ Workflow runtimes MUST follow this execution model:
 Data flows through edges as JSON values. Each node receives an input object assembled from all incoming `data` edges:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     A["Node A<br/>out: main"] -->|"data"| C["Node C<br/>in: main"]
     B["Node B<br/>out: main"] -->|"data"| C
@@ -557,7 +563,7 @@ When multiple `data` edges target the same input port, the runtime MUST merge th
 Flow control nodes (IF, Switch) route data to different output ports based on conditions:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph TD
     IF{"IF<br/>amount > 1000"}
     IF -->|"true"| HighValue["High Value<br/>Processing"]
@@ -632,10 +638,10 @@ Nodes MAY declare an `"error"` output port. When a node fails:
 
 1. If the node has an `"error"` output port with a connected downstream node, the error data MUST be routed to that port.
 2. If `continueOnFail` is `true` (at node or workflow level), downstream nodes on the `"main"` output port receive the last successful input data.
-3. If `continueOnFail` is `false` and no error port is connected, the workflow MUST halt and set its status to `"blocked"`.
+3. If `continueOnFail` is `false` and no error port is connected, the workflow MUST halt and set its status to `"failed"`.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     http["HTTP Request"]
     http -->|"main"| process["Process Data"]
@@ -671,7 +677,7 @@ When `retryOnFail` is `true`:
 1. The runtime MUST retry the failed node up to `maxRetries` times.
 2. Between retries, the runtime SHOULD wait `retryInterval` milliseconds.
 3. If all retries are exhausted, the node is treated as failed (error routing applies).
-4. During retries, the node's `status` SHOULD remain `"running"`.
+4. During retries, the node's `status` SHOULD remain `"running"`. When retries are exhausted, the node status SHOULD become `"failed"`.
 
 ### 9.4 Error Workflow
 
@@ -702,12 +708,12 @@ A node with `nodeType: "core:executeWorkflow"` invokes another vBRIEF workflow:
 }
 ```
 
-This leverages the existing `planRef` pattern from vBRIEF v0.5.
+This leverages the existing `planRef` pattern from vBRIEF v0.6.
 
 ### 10.2 Sub-Workflow Data Flow
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph TB
     subgraph "Parent Workflow"
         A["Fetch Data"] --> B["Execute Sub-Workflow"]
@@ -792,7 +798,7 @@ Conformant Workflow Profile implementations SHOULD support at minimum:
 Trigger nodes have no input ports and produce the initial data for the workflow:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     subgraph "Trigger Patterns"
         direction LR
@@ -831,7 +837,7 @@ class Edge: from, to, type, fromPort, toPort
 class PlanItem: id, title, status, nodeType, parameters, ports
 class Port: name, type
 
-vBRIEFInfo: { version: "0.5" }
+vBRIEFInfo: { version: "0.6" }
 plan: {
   id: "wf:invoice-processing",
   title: "Invoice Processing",
@@ -871,7 +877,7 @@ plan: {
 
 ### 12.3 Conformance
 
-TRON encoding of Workflow Profile documents follows the same rules as [vBRIEF v0.5 Section 7.3](vbrief-spec-0.5.md#73-conformance):
+TRON encoding of Workflow Profile documents follows the same rules as [vBRIEF v0.6 Section 7.3](vbrief-spec-0.6.md#73-conformance):
 
 ---
 
@@ -879,7 +885,7 @@ TRON encoding of Workflow Profile documents follows the same rules as [vBRIEF v0
 
 ### 13.1 Profile Detection
 
-A vBRIEF v0.5 document uses the Workflow Profile if ANY of the following are true:
+A vBRIEF v0.6 document uses the Workflow Profile if ANY of the following are true:
 
 1. The Plan object contains a `workflow` field.
 2. Any PlanItem contains a `nodeType` field.
@@ -890,7 +896,7 @@ A vBRIEF v0.5 document uses the Workflow Profile if ANY of the following are tru
 
 A document is Workflow Profile conformant if and only if:
 
-1. It is a valid vBRIEF v0.5 document (satisfies all [core conformance criteria](vbrief-spec-0.5.md#81-conformance-criteria)).
+1. It is a valid vBRIEF v0.6 document (satisfies all [core conformance criteria](vbrief-spec-0.6.md#81-conformance-criteria)).
 2. If `workflow` is present, it is an object with the fields defined in [Section 3](#3-workflow-object).
 3. If `nodeType` is present on any PlanItem, it is a non-empty string.
 4. If `ports` is present, `ports.in` is an array of strings and `ports.out` is an array of port descriptor objects.
@@ -915,7 +921,7 @@ Implementations SHOULD support three validation levels:
 
 ## 14. Security Considerations
 
-In addition to [vBRIEF v0.5 Section 9](vbrief-spec-0.5.md#9-security-considerations):
+In addition to [vBRIEF v0.6 Section 9](vbrief-spec-0.6.md#9-security-considerations):
 
 1. **No inline secrets.** The `credentials` field MUST reference credentials by name or ID. Implementations MUST NOT store secrets directly in `parameters` or `variables`. Secrets SHOULD be resolved at execution time from a secure credential store.
 
@@ -939,7 +945,7 @@ The simplest possible workflow — a manual trigger connected to an HTTP request
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "wf:minimal",
     "title": "Minimal Workflow",
@@ -986,7 +992,7 @@ The simplest possible workflow — a manual trigger connected to an HTTP request
 Visualized:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     trigger["👆 Manual Start"] -->|"main → main"| http["🌐 Fetch Data"]
 
@@ -998,7 +1004,7 @@ graph LR
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "wf:invoice-processing-v4",
     "title": "Invoice Processing with Error Handling",
@@ -1201,7 +1207,7 @@ graph LR
 Visualized:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     trigger1["⏰ Weekly Schedule<br/>cron: 0 9 * * 1"]
     http1["🌐 Fetch Invoice Data<br/>GET /invoices"]
@@ -1228,7 +1234,7 @@ graph LR
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "wf:parallel-enrichment",
     "title": "Parallel Data Enrichment",
@@ -1306,7 +1312,7 @@ graph LR
 Visualized:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     trigger["🔗 Webhook<br/>POST /enrich"]
     geo["🌍 Geo Lookup"]
@@ -1333,7 +1339,7 @@ A key strength of the Workflow Profile is that workflow nodes and traditional pl
 
 ```json
 {
-  "vBRIEFInfo": { "version": "0.5" },
+  "vBRIEFInfo": { "version": "0.6" },
   "plan": {
     "id": "release-v3",
     "title": "Release v3.0 with Automated Checks",
@@ -1391,7 +1397,7 @@ A key strength of the Workflow Profile is that workflow nodes and traditional pl
 Note how `review` is a traditional PlanItem (no `nodeType`) with a `blocks` edge — it represents a manual gate in an otherwise automated pipeline.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     lint["🤖 Run Linters<br/><i>automated</i>"]
     test["🤖 Run Test Suite<br/><i>automated</i>"]
@@ -1445,7 +1451,7 @@ A registry entry SHOULD include:
 **IF Node** — Two output ports:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     input["Input"] --> if_node{"core:IF"}
     if_node -->|"true"| yes["True Branch"]
@@ -1460,7 +1466,7 @@ graph LR
 **Switch Node** — N output ports:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     input["Input"] --> switch{"core:Switch"}
     switch -->|"case1"| a["Handler A"]
@@ -1479,7 +1485,7 @@ graph LR
 **Merge Node** — Multiple input ports:
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph LR
     a["Branch A"] -->|"input1"| merge["core:Merge"]
     b["Branch B"] -->|"input2"| merge
@@ -1498,7 +1504,7 @@ graph LR
 ### C.1 How the Workflow Profile Relates to Existing Flow-Based Tools
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#000000', 'secondaryTextColor': '#000000', 'tertiaryTextColor': '#000000', 'noteTextColor': '#000000', 'primaryColor': '#909090', 'secondaryColor': '#808080', 'tertiaryColor': '#707070', 'lineColor': '#404040'}}}%%
+%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "noteTextColor": "#000000", "primaryColor": "#909090", "secondaryColor": "#808080", "tertiaryColor": "#707070", "lineColor": "#404040"}}}%%
 graph TB
     subgraph "vBRIEF Workflow Profile"
         VP["Portable format<br/>+ Planning context<br/>+ DAG semantics<br/>+ TRON encoding"]
@@ -1552,9 +1558,9 @@ Implementations MAY provide conversion utilities. The specification does not man
 ## References
 
 - **[RFC 2119]** Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119, March 1997.
-- **[vBRIEF v0.5 Specification]** — [vbrief-spec-0.5.md](vbrief-spec-0.5.md)
+- **[vBRIEF v0.6 Specification]** — [vbrief-spec-0.6.md](vbrief-spec-0.6.md)
 - **[vBRIEF User Guide]** — [GUIDE.md](GUIDE.md)
-- **[vBRIEF JSON Schema]** — [schemas/vbrief-core.schema.json](../schemas/vbrief-core.schema.json)
+- **[vBRIEF JSON Schema]** — [schemas/vbrief-core-0.6.schema.json](../schemas/vbrief-core-0.6.schema.json)
 - **[vBRIEF TRON Encoding]** — [docs/tron-encoding.md](tron-encoding.md)
 - **[n8n Documentation]** — <https://docs.n8n.io/>
 - **[Node-RED Documentation]** — <https://nodered.org/docs/>
