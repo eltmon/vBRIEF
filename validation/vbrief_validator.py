@@ -219,7 +219,7 @@ def validate_document(file_path: str, schema_path: str = None) -> int:
             jsonschema.validate(doc, schema)
             print("✓ JSON Schema validation passed")
         except jsonschema.ValidationError as e:
-            print(f"✗ JSON Schema validation failed:")
+            print("✗ JSON Schema validation failed:")
             print(f"  {e.message}")
             if e.path:
                 path = ".".join(str(p) for p in e.path)

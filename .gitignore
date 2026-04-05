@@ -14,3 +14,14 @@ api/go/coverage.html
 .DS_Store
 deft/
 __pycache__/
+
+# Python build artifacts
+dist/
+*.egg-info/
+.coverage
+
+# Secrets
+secrets/
+
+# Nested repos
+directive/

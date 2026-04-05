@@ -1,11 +1,11 @@
 """libvbrief public API."""
+from libvbrief.builder import PlanBuilder, from_items, quick_todo
 
 from libvbrief.errors import LibVBriefError, ValidationError
 from libvbrief.io import dump_file, dumps, load_file, loads, validate
 from libvbrief.issues import Issue, ValidationReport
 from libvbrief.models import Plan, PlanItem, VBriefDocument
-
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "__version__",
@@ -21,4 +21,7 @@ __all__ = [
     "VBriefDocument",
     "Plan",
     "PlanItem",
+    "PlanBuilder",
+    "quick_todo",
+    "from_items",
 ]

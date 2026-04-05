@@ -35,6 +35,7 @@ ISSUE_INVALID_ITEM_TYPE: Final[str] = "invalid_item_type"
 ISSUE_MISSING_ITEM_FIELD: Final[str] = "missing_item_field"
 ISSUE_INVALID_ITEM_STATUS: Final[str] = "invalid_item_status"
 ISSUE_INVALID_ID_FORMAT: Final[str] = "invalid_id_format"
+ISSUE_DUPLICATE_ITEM_ID: Final[str] = "duplicate_item_id"
 ISSUE_INVALID_PLANREF: Final[str] = "invalid_planref"
 ISSUE_INVALID_SUBITEMS_TYPE: Final[str] = "invalid_subitems_type"
 

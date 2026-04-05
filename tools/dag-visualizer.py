@@ -8,8 +8,7 @@ Useful for visualizing workflow dependencies and execution order.
 
 import json
 import sys
-from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List
 
 
 class DAGVisualizer:
